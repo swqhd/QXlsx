@@ -21,7 +21,8 @@ class Chart : public AbstractOOXmlFile
 {
     Q_DECLARE_PRIVATE(Chart)
 public:
-    enum ChartType { // 16 type of chart (ECMA 376)
+    enum ChartType // 16 type of chart (ECMA 376)
+    {
         CT_NoStatementChart = 0, // Zero is internally used for unknown types
         CT_AreaChart, CT_Area3DChart, CT_LineChart,
         CT_Line3DChart, CT_StockChart, CT_RadarChart,
@@ -30,13 +31,15 @@ public:
         CT_OfPieChart, CT_SurfaceChart, CT_Surface3DChart,
         CT_BubbleChart,
     };
-    enum ChartAxisPos { Left, Right, Top, Bottom  };
-private:
+    enum ChartAxisPos {
+        Left, Right, Top, Bottom
+    };
+protected:
     friend class AbstractSheet;
     friend class Worksheet;
     friend class Chartsheet;
     friend class DrawingAnchor;
-private:
+protected:
     Chart(AbstractSheet *parent, CreateFlag flag);
 public:
     ~Chart();

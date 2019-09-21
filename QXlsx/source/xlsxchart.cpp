@@ -17,29 +17,11 @@ QT_BEGIN_NAMESPACE_XLSX
 ChartPrivate::ChartPrivate(Chart *q, Chart::CreateFlag flag)
     : AbstractOOXmlFilePrivate(q, flag), chartType(static_cast<Chart::ChartType>(0))
 {
-
 }
 
 ChartPrivate::~ChartPrivate()
 {
-    /*
-    QList< QSharedPointer<XlsxSeries> > seriesList;
-    QList< QSharedPointer<XlsxAxis> > axisList;
-    QMap< XlsxAxis::AxisPos, QString > axisNames;
-     */
-    // qDeleteAll( seriesList );
-    // qDeleteAll( axisList );
-    // qDeleteAll( axisNames );
-
-    /*
-    for (int i = 0; i < axisList.size(); ++i)
-    {
-        QSharedPointer<XlsxAxis> ptr = axisList.at(i);
-        // ptr->deleteLater();
-    }
-    */
 }
-
 
 
 /*!

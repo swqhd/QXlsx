@@ -31,12 +31,12 @@ int test( QVector<QVariant> params )
 
     Document output;
     // TEST CODE
-    output.saveAs("test10.xlsx");
+    output.saveAs("memo11.xlsx");
 
-    Document output2("test10.xlsx");
+    Document output2("memo11.xlsx");
     if ( output2.load() )
     {
-        output2.saveAs("test20.xlsx");
+        output2.saveAs("memo12.xlsx");
         qDebug() << "[debug] xlsx is saved.";
     }
 

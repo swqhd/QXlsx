@@ -62,11 +62,9 @@ public:
 class ChartPrivate : public AbstractOOXmlFilePrivate
 {
     Q_DECLARE_PUBLIC(Chart)
-
 public:
-    ChartPrivate(Chart *q, Chart::CreateFlag flag);
+    ChartPrivate(Chart* q, Chart::CreateFlag flag);
     ~ChartPrivate();
-
 public:
     bool loadXmlChart(QXmlStreamReader &reader);
     bool loadXmlPlotArea(QXmlStreamReader &reader);
@@ -96,7 +94,6 @@ protected:
     bool loadXmlAxisEG_AxShared_Title_Tx_Rich_P(QXmlStreamReader &reader, XlsxAxis* axis);
     bool loadXmlAxisEG_AxShared_Title_Tx_Rich_P_pPr(QXmlStreamReader &reader, XlsxAxis* axis);
     bool loadXmlAxisEG_AxShared_Title_Tx_Rich_P_R(QXmlStreamReader &reader, XlsxAxis* axis);
-
 public:
     void saveXmlChart(QXmlStreamWriter &writer) const;
     void saveXmlChartTitle(QXmlStreamWriter &writer) const;
@@ -113,12 +110,11 @@ protected:
     void saveXmlAxisDateAx(QXmlStreamWriter &writer, XlsxAxis* axis) const;
     void saveXmlAxisSerAx(QXmlStreamWriter &writer, XlsxAxis* axis) const;
     void saveXmlAxisValAx(QXmlStreamWriter &writer, XlsxAxis* axis) const;
-
     void saveXmlAxisEG_AxShared(QXmlStreamWriter &writer, XlsxAxis* axis) const;
     void saveXmlAxisEG_AxShared_Title(QXmlStreamWriter &writer, XlsxAxis* axis) const;
+protected:
     QString GetAxisPosString( XlsxAxis::AxisPos axisPos ) const;
     QString GetAxisName(XlsxAxis* ptrXlsxAxis) const;
-
 public:
     Chart::ChartType chartType;
     QList< QSharedPointer<XlsxSeries> > seriesList;

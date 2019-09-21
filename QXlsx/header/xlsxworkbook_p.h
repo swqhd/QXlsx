@@ -39,14 +39,17 @@ public:
     WorkbookPrivate(Workbook *q, Workbook::CreateFlag flag);
 
     QSharedPointer<SharedStrings> sharedStrings;
-    QList<QSharedPointer<AbstractSheet> > sheets;
-    QList<QSharedPointer<SimpleOOXmlFile> > externalLinks;
+    QList< QSharedPointer<AbstractSheet> > sheets;
+    QList< QSharedPointer<SimpleOOXmlFile> > externalLinks;
     QStringList sheetNames;
     QSharedPointer<Styles> styles;
     QSharedPointer<Theme> theme;
-    QList<QSharedPointer<MediaFile> > mediaFiles;
-    QList<QSharedPointer<Chart> > chartFiles;
+    QList< QSharedPointer<MediaFile> > mediaFiles;
+    QList< QSharedPointer<Chart> > chartFiles;
     QList<XlsxDefineNameData> definedNamesList;
+
+    // dev61
+    // QList< QSharedPointer<Comments> > commentsFiles;
 
     bool strings_to_numbers_enabled;
     bool strings_to_hyperlinks_enabled;

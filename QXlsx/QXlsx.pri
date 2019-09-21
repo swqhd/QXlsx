@@ -92,7 +92,8 @@ $${QXLSX_HEADERPATH}xlsxworksheet_p.h \
 $${QXLSX_HEADERPATH}xlsxzipreader_p.h \
 $${QXLSX_HEADERPATH}xlsxzipwriter_p.h \
 $${QXLSX_HEADERPATH}xlsxcelllocation.h \
-$${QXLSX_HEADERPATH}xlsxdatetype.h
+$${QXLSX_HEADERPATH}xlsxdatetype.h \
+$${QXLSX_HEADERPATH}xlsxcomments.h
 
 SOURCES += \
 $${QXLSX_SOURCEPATH}xlsxabstractooxmlfile.cpp \
@@ -127,8 +128,8 @@ $${QXLSX_SOURCEPATH}xlsxworksheet.cpp \
 $${QXLSX_SOURCEPATH}xlsxzipreader.cpp \
 $${QXLSX_SOURCEPATH}xlsxzipwriter.cpp \
 $${QXLSX_SOURCEPATH}xlsxcelllocation.cpp \
-$${QXLSX_SOURCEPATH}xlsxdatetype.cpp
-
+$${QXLSX_SOURCEPATH}xlsxdatetype.cpp \
+$${QXLSX_SOURCEPATH}xlsxcomments.cpp
 
 ######################################################################
 # custom setting for compiler & system
