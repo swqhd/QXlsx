@@ -1,0 +1,4 @@
+
+void ContentTypes::addCommentName(const QString &name)
+
+

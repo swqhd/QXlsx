@@ -216,27 +216,53 @@ AbstractSheet *Workbook::addSheet(const QString &name, int sheetId, AbstractShee
 AbstractSheet *Workbook::insertSheet(int index, const QString &name, AbstractSheet::SheetType type)
 {
     Q_D(Workbook);
+
     QString sheetName = createSafeSheetName(name);
-    if(index > d->last_sheet_id){
+
+    if (index > d->last_sheet_id)
+    {
         //User tries to insert, where no sheet has gone before.
         return 0;
     }
-    if (!sheetName.isEmpty()) {
+
+    if (!sheetName.isEmpty())
+    {
         //If user given an already in-used name, we should not continue any more!
         if (d->sheetNames.contains(sheetName))
             return 0;
-    } else {
-        if (type == AbstractSheet::ST_WorkSheet) {
-            do {
+    }
+    else
+    {
+        if (type == AbstractSheet::ST_WorkSheet)
+        {
+            do
+            {
                 ++d->last_worksheet_index;
                 sheetName = QStringLiteral("Sheet%1").arg(d->last_worksheet_index);
-            } while (d->sheetNames.contains(sheetName));
-        } else if (type == AbstractSheet::ST_ChartSheet) {
-            do {
+            }
+            while (d->sheetNames.contains(sheetName));
+        }
+        else if (type == AbstractSheet::ST_ChartSheet)
+        {
+            do
+            {
                 ++d->last_chartsheet_index;
                 sheetName = QStringLiteral("Chart%1").arg(d->last_chartsheet_index);
-            } while (d->sheetNames.contains(sheetName));
-        } else {
+            }
+            while (d->sheetNames.contains(sheetName));
+        }
+        else if ( type == AbstractSheet::ST_DialogSheet )
+        {
+            qWarning("unsupported sheet type.");
+            return 0;
+        }
+        else if ( type == AbstractSheet::ST_MacroSheet )
+        {
+            qWarning("unsupported sheet type.");
+            return 0;
+        }
+        else
+        {
             qWarning("unsupported sheet type.");
             return 0;
         }
@@ -252,6 +278,16 @@ AbstractSheet *Workbook::insertSheet(int index, const QString &name, AbstractShe
     else if ( type == AbstractSheet::ST_ChartSheet )
     {
         sheet = new Chartsheet(sheetName, d->last_sheet_id, this, F_NewFromScratch);
+    }
+    else if ( type == AbstractSheet::ST_DialogSheet )
+    {
+        qWarning("unsupported sheet type.");
+        Q_ASSERT(false);
+    }
+    else if ( type == AbstractSheet::ST_MacroSheet )
+    {
+        qWarning("unsupported sheet type.");
+        Q_ASSERT(false);
     }
     else
     {

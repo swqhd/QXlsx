@@ -1,27 +1,4 @@
-/****************************************************************************
-** Copyright (c) 2013-2014 Debao Zhang <hello@debao.me>
-** All right reserved.
-**
-** Permission is hereby granted, free of charge, to any person obtaining
-** a copy of this software and associated documentation files (the
-** "Software"), to deal in the Software without restriction, including
-** without limitation the rights to use, copy, modify, merge, publish,
-** distribute, sublicense, and/or sell copies of the Software, and to
-** permit persons to whom the Software is furnished to do so, subject to
-** the following conditions:
-**
-** The above copyright notice and this permission notice shall be
-** included in all copies or substantial portions of the Software.
-**
-** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-** NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-** LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-** OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-** WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-**
-****************************************************************************/
+// xlsxdocument.cpp
 
 #include "xlsxdocument.h"
 #include "xlsxdocument_p.h"
@@ -42,6 +19,7 @@
 #include "xlsxzipreader_p.h"
 #include "xlsxzipwriter_p.h"
 
+#include <QtGlobal>
 #include <QFile>
 #include <QPointF>
 #include <QBuffer>
@@ -312,7 +290,7 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
 	zipWriter.addFile(QStringLiteral("xl/_rels/workbook.xml.rels"), workbook->relationships()->saveToXmlData());
 
 	// save drawing xml files
-    for (int i=0; i<workbook->drawings().size(); ++i)
+    for (int i = 0 ; i<workbook->drawings().size() ; ++i)
     {
 		contentTypes->addDrawingName(QStringLiteral("drawing%1").arg(i+1));
 
@@ -323,7 +301,8 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
 	}
 
 	// save docProps app/core xml file
-	foreach (QString name, q->documentPropertyNames()) {
+    foreach (QString name, q->documentPropertyNames())
+    {
 		docPropsApp.setProperty(name, q->documentProperty(name));
 		docPropsCore.setProperty(name, q->documentProperty(name));
 	}
@@ -333,7 +312,8 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
 	zipWriter.addFile(QStringLiteral("docProps/core.xml"), docPropsCore.saveToXmlData());
 
 	// save sharedStrings xml file
-	if (!workbook->sharedStrings()->isEmpty()) {
+    if (!workbook->sharedStrings()->isEmpty())
+    {
 		contentTypes->addSharedString();
 		zipWriter.addFile(QStringLiteral("xl/sharedStrings.xml"), workbook->sharedStrings()->saveToXmlData());
 	}
@@ -351,7 +331,7 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
 	zipWriter.addFile(QStringLiteral("xl/theme/theme1.xml"), workbook->theme()->saveToXmlData());
 
 	// save chart xml files
-    for (int i=0; i<workbook->chartFiles().size(); ++i)
+    for (int i = 0 ; i < workbook->chartFiles().size() ; ++i)
     {
 		contentTypes->addChartName(QStringLiteral("chart%1").arg(i+1));
 		QSharedPointer<Chart> cf = workbook->chartFiles()[i];
@@ -359,7 +339,7 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
 	}
 
 	// save image files
-    for (int i=0; i<workbook->mediaFiles().size(); ++i)
+    for (int i = 0 ; i < workbook->mediaFiles().size() ; ++i)
     {
 		QSharedPointer<MediaFile> mf = workbook->mediaFiles()[i];
 		if (!mf->mimeType().isEmpty())
