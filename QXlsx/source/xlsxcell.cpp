@@ -116,6 +116,8 @@ QVariant Cell::readValue() const
 
 	Format fmt = this->format();
 
+    qint32 styleNo = d->styleNumber;
+
 	if (isDateTime())
 	{
         QVariant vDT = dateTime();
@@ -150,7 +152,7 @@ QVariant Cell::readValue() const
         // 	// TODO: use number format
         // }
 
-        // qint32 styleNo = d->styleNumber;
+
 
         // if (styleNo == 10)
         // {
@@ -167,8 +169,8 @@ QVariant Cell::readValue() const
         // {
         // }
 
-        // if (styleNo == 13) // (HH:mm:ss)
-        // {
+        //if (styleNo == 13) // (HH:mm:ss)
+        //{
             // double dValue = d->value.toDouble();
             // int day = int(dValue); // unit is day.
             // double deciamlPointValue1 = dValue - double(day);
@@ -191,7 +193,7 @@ QVariant Cell::readValue() const
             // ret = strTime;
 
             // return ret;
-        // }
+        //}
 
         // return ret;
         // */
@@ -250,7 +252,7 @@ bool Cell::isDateTime() const
 	bool isValidFormat = d->format.isValid();
     bool isDateTimeFormat = d->format.isDateTimeFormat(); // datetime format
 
-    if ( // cellType == NumberType ||
+    if ( cellType == NumberType ||
          cellType == DateType ||
          cellType == CustomType )
     {
