@@ -119,7 +119,8 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
 
 	//load core property
 	QList<XlsxRelationship> rels_core = rootRels.packageRelationships(QStringLiteral("/metadata/core-properties"));
-	if (!rels_core.isEmpty()) {
+    if (!rels_core.isEmpty())
+    {
 		//Get the core property file name if it exists.
 		//In normal case, this should be "docProps/core.xml"
 		QString docPropsCore_Name = rels_core[0].target;
@@ -132,7 +133,8 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
 
 	//load app property
 	QList<XlsxRelationship> rels_app = rootRels.documentRelationships(QStringLiteral("/extended-properties"));
-	if (!rels_app.isEmpty()) {
+    if (!rels_app.isEmpty())
+    {
 		//Get the app property file name if it exists.
 		//In normal case, this should be "docProps/app.xml"
 		QString docPropsApp_Name = rels_app[0].target;
@@ -159,7 +161,8 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
 
 	//load styles
 	QList<XlsxRelationship> rels_styles = workbook->relationships()->documentRelationships(QStringLiteral("/styles"));
-	if (!rels_styles.isEmpty()) {
+    if (!rels_styles.isEmpty())
+    {
 		//In normal case this should be styles.xml which in xl
 		QString name = rels_styles[0].target;
 
@@ -181,7 +184,8 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
 
 	//load sharedStrings
 	QList<XlsxRelationship> rels_sharedStrings = workbook->relationships()->documentRelationships(QStringLiteral("/sharedStrings"));
-	if (!rels_sharedStrings.isEmpty()) {
+    if (!rels_sharedStrings.isEmpty())
+    {
 		//In normal case this should be sharedStrings.xml which in xl
 		QString name = rels_sharedStrings[0].target;
 		QString path = xlworkbook_Dir + QLatin1String("/") + name;
@@ -190,7 +194,8 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
 
 	//load theme
 	QList<XlsxRelationship> rels_theme = workbook->relationships()->documentRelationships(QStringLiteral("/theme"));
-	if (!rels_theme.isEmpty()) {
+    if (!rels_theme.isEmpty())
+    {
 		//In normal case this should be theme/theme1.xml which in xl
 		QString name = rels_theme[0].target;
 		QString path = xlworkbook_Dir + QLatin1String("/") + name;
@@ -198,7 +203,8 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
 	}
 
 	//load sheets
-	for (int i=0; i<workbook->sheetCount(); ++i) {
+    for (int i=0; i<workbook->sheetCount(); ++i)
+    {
 		AbstractSheet *sheet = workbook->sheet(i);
         QString strFilePath = sheet->filePath();
         QString rel_path = getRelFilePath(strFilePath);
@@ -209,7 +215,8 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
 	}
 
 	//load external links
-	for (int i=0; i<workbook->d_func()->externalLinks.count(); ++i) {
+    for (int i=0; i<workbook->d_func()->externalLinks.count(); ++i)
+    {
 		SimpleOOXmlFile *link = workbook->d_func()->externalLinks[i].data();
 		QString rel_path = getRelFilePath(link->filePath());
 		//If the .rel file exists, load it.
@@ -236,7 +243,8 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
 
 	//load media files
 	QList<QSharedPointer<MediaFile> > mediaFileToLoad = workbook->mediaFiles();
-	for (int i=0; i<mediaFileToLoad.size(); ++i) {
+    for (int i=0; i<mediaFileToLoad.size(); ++i)
+    {
 		QSharedPointer<MediaFile> mf = mediaFileToLoad[i];
 		const QString path = mf->fileName();
 		const QString suffix = path.mid(path.lastIndexOf(QLatin1Char('.'))+1);

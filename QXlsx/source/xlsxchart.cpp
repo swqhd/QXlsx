@@ -351,7 +351,7 @@ bool ChartPrivate::loadXmlPlotArea(QXmlStreamReader &reader)
         {
             if (!loadXmlPlotAreaElement(reader))
             {
-                qDebug() << "[debug] failed to load plotarea element.";
+                // qDebug() << "[debug] failed to load plotarea element.";
                 return false;
             }
 
@@ -378,7 +378,7 @@ bool ChartPrivate::loadXmlPlotAreaElement(QXmlStreamReader &reader)
         // for pieChart, barChart, ... (choose one)
         if ( !loadXmlXxxChart(reader) )
         {
-            qDebug() << "[debug] failed to load chart";
+            // qDebug() << "[debug] failed to load chart";
             return false;
         }
     }
@@ -494,7 +494,7 @@ bool ChartPrivate::loadXmlXxxChart(QXmlStreamReader &reader)
     }
     else
     {
-        qDebug() << "[undefined chart type] " << name;
+        // qDebug() << "[undefined chart type] " << name;
         chartType = Chart::CT_NoStatementChart;
         return false;
     }
@@ -1119,7 +1119,7 @@ bool ChartPrivate::loadXmlAxisCatAx(QXmlStreamReader &reader)
     // load EG_AxShared
     if ( ! loadXmlAxisEG_AxShared( reader, axis ) )
     {
-        qDebug() << "failed to load EG_AxShared";
+        // qDebug() << "failed to load EG_AxShared";
         return false;
     }
 
@@ -1145,7 +1145,7 @@ bool ChartPrivate::loadXmlAxisDateAx(QXmlStreamReader &reader)
     // load EG_AxShared
     if ( ! loadXmlAxisEG_AxShared( reader, axis ) )
     {
-        qDebug() << "failed to load EG_AxShared";
+        // qDebug() << "failed to load EG_AxShared";
         return false;
     }
 
@@ -1172,7 +1172,7 @@ bool ChartPrivate::loadXmlAxisSerAx(QXmlStreamReader &reader)
     // load EG_AxShared
     if ( ! loadXmlAxisEG_AxShared( reader, axis ) )
     {
-        qDebug() << "failed to load EG_AxShared";
+        // qDebug() << "failed to load EG_AxShared";
         return false;
     }
 
@@ -1194,7 +1194,7 @@ bool ChartPrivate::loadXmlAxisValAx(QXmlStreamReader &reader)
 
     if ( ! loadXmlAxisEG_AxShared( reader, axis ) )
     {
-        qDebug() << "failed to load EG_AxShared";
+        // qDebug() << "failed to load EG_AxShared";
         return false;
     }
 
@@ -1285,7 +1285,7 @@ bool ChartPrivate::loadXmlAxisEG_AxShared(QXmlStreamReader &reader, XlsxAxis* ax
                 // title
                 if ( !loadXmlAxisEG_AxShared_Title(reader, axis) )
                 {
-                    qDebug() << "failed to load EG_AxShared title.";
+                    // qDebug() << "failed to load EG_AxShared title.";
                     Q_ASSERT(false);
                     return false;
                 }

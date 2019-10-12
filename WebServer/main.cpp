@@ -137,7 +137,7 @@ bool loadXlsx(QString fileName, QString& strHtml)
 
             // value of cell
             QVariant var = cl.cell.data()->value();
-            QString str = var.toString();
+            QString str = QString("[") + QString(var.typeName()) + QString("] ") + var.toString();
 
             cellValues[row][col] = str;
         }

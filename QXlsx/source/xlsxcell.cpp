@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include <QtGlobal>
+#include <QDebug>
 #include <QDateTime>
 #include <QDate>
 #include <QTime>
@@ -115,8 +117,9 @@ QVariant Cell::readValue() const
 	ret = d->value;
 
 	Format fmt = this->format();
-
     qint32 styleNo = d->styleNumber;
+
+    // qDebug() << "\t\tCell::readValue() : " << ret << fmt << styleNo;
 
 	if (isDateTime())
 	{
@@ -151,8 +154,6 @@ QVariant Cell::readValue() const
         // {
         // 	// TODO: use number format
         // }
-
-
 
         // if (styleNo == 10)
         // {
@@ -199,7 +200,7 @@ QVariant Cell::readValue() const
         // */
 	}
 
-	if (hasFormula())
+    if ( hasFormula() )
 	{
 		QString formulaString = this->formula().formulaText();
 		ret = formulaString;
@@ -245,6 +246,26 @@ CellFormula Cell::formula() const
 bool Cell::isDateTime() const
 {
 	Q_D(const Cell);
+
+    // dev65
+    // {{
+    // QVariant tempValue = d->value;
+    // qDebug() << "isDateTime()" << tempValue;
+
+    if ( d->value.type() == QVariant::DateTime )
+    {
+    }
+
+    if ( d->value.type() == QVariant::DateTime )
+    {
+
+    }
+
+    if ( d->value.type() == QVariant::Time )
+    {
+
+    }
+    // }}
 
 	Cell::CellType cellType = d->cellType;
     double dValue = d->value.toDouble(); // number

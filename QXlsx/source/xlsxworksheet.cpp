@@ -460,9 +460,12 @@ bool Worksheet::write(int row, int column, const QVariant &value, const Format &
     {
 		ret = writeString(row, column, value.value<RichString>(), format);
     }
-    else if (value.userType() == QMetaType::Int || value.userType() == QMetaType::UInt
-			   || value.userType() == QMetaType::LongLong || value.userType() == QMetaType::ULongLong
-               || value.userType() == QMetaType::Double || value.userType() == QMetaType::Float)
+    else if (value.userType() == QMetaType::Int ||
+             value.userType() == QMetaType::UInt ||
+             value.userType() == QMetaType::LongLong ||
+             value.userType() == QMetaType::ULongLong ||
+             value.userType() == QMetaType::Double ||
+             value.userType() == QMetaType::Float )
     {
 		//Number
 
@@ -473,15 +476,16 @@ bool Worksheet::write(int row, int column, const QVariant &value, const Format &
 		//Bool
 		ret = writeBool(row,column, value.toBool(), format);
     }
-    else if (value.userType() == QMetaType::QDateTime || value.userType() == QMetaType::QDate)
+    else if ( value.userType() == QMetaType::QDateTime )
     {
-		//DateTime, Date
-		//  note that, QTime cann't convert to QDateTime
 		ret = writeDateTime(row, column, value.toDateTime(), format);
+    }
+    else if ( value.userType() == QMetaType::QDate )
+    {
+        ret = writeDate(row, column, value.toDate(), format); // dev65
     }
     else if (value.userType() == QMetaType::QTime)
     {
-		//Time
 		ret = writeTime(row, column, value.toTime(), format);
     }
     else if (value.userType() == QMetaType::QUrl)
@@ -871,11 +875,8 @@ bool Worksheet::writeBool(int row, int column, bool value, const Format &format)
 
 	return true;
 }
-/*!
-	\overload
-	Write a QDateTime \a dt to the cell \a row_column with the \a format.
-	Returns true on success.
- */
+
+// dev65
 bool Worksheet::writeDateTime(const CellReference &row_column, const QDateTime &dt, const Format &format)
 {
 	if (!row_column.isValid())
@@ -884,10 +885,7 @@ bool Worksheet::writeDateTime(const CellReference &row_column, const QDateTime &
 	return writeDateTime(row_column.row(), row_column.column(), dt, format);
 }
 
-/*!
-	Write a QDateTime \a dt to the cell (\a row, \a column) with the \a format.
-	Returns true on success.
- */
+// dev65
 bool Worksheet::writeDateTime(int row, int column, const QDateTime &dt, const Format &format)
 {
 	Q_D(Worksheet);
@@ -895,8 +893,10 @@ bool Worksheet::writeDateTime(int row, int column, const QDateTime &dt, const Fo
 		return false;
 
 	Format fmt = format.isValid() ? format : d->cellFormat(row, column);
+
 	if (!fmt.isValid() || !fmt.isDateTimeFormat())
 		fmt.setNumberFormat(d->workbook->defaultDateFormat());
+
 	d->workbook->styles()->addXfFormat(fmt);
 
 	double value = datetimeToNumber(dt, d->workbook->isDate1904());
@@ -906,23 +906,47 @@ bool Worksheet::writeDateTime(int row, int column, const QDateTime &dt, const Fo
 	return true;
 }
 
-/*!
-	\overload
-	Write a QTime \a t to the cell \a row_column with the \a format.
-	Returns true on success.
- */
+// dev65
+bool Worksheet::writeDate(const CellReference &row_column, const QDate &dt, const Format &format)
+{
+    if (!row_column.isValid())
+        return false;
+
+    return writeDate(row_column.row(), row_column.column(), dt, format);
+}
+
+// dev65
+bool Worksheet::writeDate(int row, int column, const QDate &dt, const Format &format)
+{
+    Q_D(Worksheet);
+    if (d->checkDimensions(row, column))
+        return false;
+
+    Format fmt = format.isValid() ? format : d->cellFormat(row, column);
+
+    if (!fmt.isValid() || !fmt.isDateTimeFormat())
+        fmt.setNumberFormat(d->workbook->defaultDateFormat());
+
+    d->workbook->styles()->addXfFormat(fmt);
+
+    double value = datetimeToNumber(QDateTime(dt, QTime(0,0,0)), d->workbook->isDate1904());
+
+    d->cellTable[row][column] = QSharedPointer<Cell>(new Cell(value, Cell::NumberType, fmt, this));
+
+    return true;
+}
+
+// dev65
 bool Worksheet::writeTime(const CellReference &row_column, const QTime &t, const Format &format)
 {
 	if (!row_column.isValid())
 		return false;
 
-	return writeTime(row_column.row(), row_column.column(), t, format);
+    bool ret = writeTime(row_column.row(), row_column.column(), t, format);
+    return ret;
 }
 
-/*!
-	Write a QTime \a t to the cell (\a row, \a column) with the \a format.
-	Returns true on success.
- */
+// dev65
 bool Worksheet::writeTime(int row, int column, const QTime &t, const Format &format)
 {
 	Q_D(Worksheet);
@@ -1481,6 +1505,8 @@ void WorksheetPrivate::saveXmlCellData(QXmlStreamWriter &writer, int row, int co
 {
     Q_Q(const Worksheet);
 
+    // qDebug() << "WorksheetPrivate::saveXmlCellData() : " << cell->cellType() << cell->value();
+
 	//This is the innermost loop so efficiency is important.
 	QString cell_pos = CellReference(row, col).toString();
 
@@ -1584,6 +1610,9 @@ void WorksheetPrivate::saveXmlCellData(QXmlStreamWriter &writer, int row, int co
     {
         // dev57
 
+        // qDebug() << "\t\t" <<  cell->value() ;
+
+        /*
         QString iso8601DateTime;
         if ( cell->value().type() == QVariant::DateTime )
         {
@@ -1658,9 +1687,28 @@ void WorksheetPrivate::saveXmlCellData(QXmlStreamWriter &writer, int row, int co
 
         if ( ! iso8601DateTime.isEmpty() )
         {
+            double num = cell->value().toDouble();
+            QString strNum = cell->value().toString();
+            // qDebug() << "\t\tiso8601DateTime : " << iso8601DateTime << " , " << num << " , " << strNum;
+
             writer.writeAttribute(QStringLiteral("t"), QStringLiteral("d"));
             writer.writeTextElement(QStringLiteral("v"), iso8601DateTime );
         }
+        */
+
+        // dev65
+
+        double num = cell->value().toDouble();
+        bool is1904 = q->workbook()->isDate1904();
+        if (!is1904 && num > 60) // for mac os excel
+        {
+            num = num - 1;
+        }
+
+        // number type. see for 18.18.11 ST_CellType (Cell Type) more information.
+        writer.writeAttribute(QStringLiteral("t"), QStringLiteral("n"));
+        writer.writeTextElement(QStringLiteral("v"), cell->value().toString() );
+
     }
     else if (cell->cellType() == Cell::ErrorType) // 'e'
     {
@@ -2276,6 +2324,8 @@ void WorksheetPrivate::loadXmlSheetData(QXmlStreamReader &reader)
 
 	Q_ASSERT(reader.name() == QLatin1String("sheetData"));
 
+    // qDebug() << "loadXmlSheetData()";
+
 	while (!reader.atEnd() && !(reader.name() == QLatin1String("sheetData") && reader.tokenType() == QXmlStreamReader::EndElement)) 
 	{
 		if (reader.readNextStartElement()) 
@@ -2380,8 +2430,7 @@ void WorksheetPrivate::loadXmlSheetData(QXmlStreamReader &reader)
                     }
 					else
 					{
-                        // custom type
-                        cellType = Cell::CustomType;
+                        cellType = Cell::CustomType; // custom type
 					}
 				}
 
@@ -2435,13 +2484,17 @@ void WorksheetPrivate::loadXmlSheetData(QXmlStreamReader &reader)
 							} 
                             else  if (cellType == Cell::DateType)
                             {
-                                // [dev54] DateType
+                                // dev65
 
                                 double dValue = value.toDouble(); // days from 1900(or 1904)
                                 bool bIsDate1904 = q->workbook()->isDate1904();
 
                                 QVariant vDatetimeValue = datetimeFromNumber( dValue, bIsDate1904 );
-                                cell->d_func()->value = vDatetimeValue;
+
+                                // qDebug() << "\t\tvDatetimeValue : " << vDatetimeValue << dValue;
+
+                                // cell->d_func()->value = vDatetimeValue;
+                                cell->d_func()->value = dValue; // dev65
                             }
 							else 
                             {

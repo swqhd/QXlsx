@@ -1317,7 +1317,7 @@ bool Styles::loadFromXmlFile(QIODevice *device)
         }
 
         if (reader.hasError()) {
-            qDebug()<<"Error when read style file: "<<reader.errorString();
+            // qDebug()<<"Error when read style file: "<<reader.errorString();
         }
     }
     return true;
