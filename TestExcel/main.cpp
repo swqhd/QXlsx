@@ -71,6 +71,8 @@ int main(int argc, char *argv[])
 	style();
 	worksheetoperations();
     pages();
+
+    qDebug() << "*** end of main() ***";
 	
 	return 0;
 }
