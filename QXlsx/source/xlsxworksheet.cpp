@@ -1529,7 +1529,7 @@ void WorksheetPrivate::saveXmlCellData(QXmlStreamWriter &writer, int row, int co
 		else
 			sst_idx = sharedStrings()->getSharedStringIndex(cell->value().toString());
 
-		writer.writeAttribute(QStringLiteral("t"), QStringLiteral("s"));
+        writer.writeAttribute(QStringLiteral("t"), QStringLiteral("s")); // shared string 18.18.11 ST_CellType
 		writer.writeTextElement(QStringLiteral("v"), QString::number(sst_idx));
     }
     else if (cell->cellType() == Cell::InlineStringType) // 'inlineStr'
@@ -1578,14 +1578,21 @@ void WorksheetPrivate::saveXmlCellData(QXmlStreamWriter &writer, int row, int co
         }
 
         if (cell->value().isValid())
-        {   //note that, invalid value means 'v' is blank
-			double value = cell->value().toDouble();
+        {
+            // dev65 : set number type in writing cell type
+            writer.writeAttribute(QStringLiteral("t"), QStringLiteral("n")); // number
+
+            // note that, invalid value means 'v' is blank
+
+            double value = cell->value().toDouble();
+
 			writer.writeTextElement(QStringLiteral("v"), QString::number(value, 'g', 15));
 		}
     }
     else if (cell->cellType() == Cell::StringType) // 'str'
     {
 		writer.writeAttribute(QStringLiteral("t"), QStringLiteral("str"));
+
 		if (cell->hasFormula())
 			cell->formula().saveToXml(writer);
 
@@ -1608,94 +1615,6 @@ void WorksheetPrivate::saveXmlCellData(QXmlStreamWriter &writer, int row, int co
 	}
     else if (cell->cellType() == Cell::DateType) // 'd'
     {
-        // dev57
-
-        // qDebug() << "\t\t" <<  cell->value() ;
-
-        /*
-        QString iso8601DateTime;
-        if ( cell->value().type() == QVariant::DateTime )
-        {
-            iso8601DateTime = cell->value().toDateTime().toString( Qt::ISODate );
-        }
-        else if ( cell->value().type() == QVariant::Date )
-        {
-            QDateTime dtTemp( cell->value().toDate(), QTime(0,0,0) );
-            iso8601DateTime = dtTemp.toString( Qt::ISODate );
-        }
-        else if ( cell->value().type() == QVariant::Time )
-        {
-            double num = timeToNumber( cell->value().toTime() );
-            bool is1904 = q->workbook()->isDate1904();
-
-            if (!is1904 && num > 60) // for mac os excel
-            {
-                num = num - 1;
-            }
-
-            qint64 msecs = static_cast<qint64>(num * 1000*60*60*24.0 + 0.5);
-            QDateTime epoch(is1904 ? QDate(1904, 1, 1): QDate(1899, 12, 31), QTime(0,0));
-
-            QDateTime dtRet; // return value
-
-            QDateTime dtOld = epoch.addMSecs(msecs);
-            dtRet = dtOld;
-
-        #if QT_VERSION >= 0x050200
-            // Remove one hour to see whether the date is Daylight
-            QDateTime dtNew = dtRet.addMSecs(-3600);
-            if ( dtNew.isDaylightTime() )
-            {
-                dtRet = dtNew;
-            }
-        #endif
-
-            iso8601DateTime = dtRet.toString( Qt::ISODate );
-
-        }
-        else
-        {
-            // number, string ?
-
-            double num = cell->value().toDouble();
-            bool is1904 = q->workbook()->isDate1904();
-
-            if (!is1904 && num > 60) // for mac os excel
-            {
-                num = num - 1;
-            }
-
-            qint64 msecs = static_cast<qint64>(num * 1000*60*60*24.0 + 0.5);
-            QDateTime epoch(is1904 ? QDate(1904, 1, 1): QDate(1899, 12, 31), QTime(0,0));
-
-            QDateTime dtRet; // return value
-
-            QDateTime dtOld = epoch.addMSecs(msecs);
-            dtRet = dtOld;
-
-        #if QT_VERSION >= 0x050200
-            // Remove one hour to see whether the date is Daylight
-            QDateTime dtNew = dtRet.addMSecs(-3600);
-            if ( dtNew.isDaylightTime() )
-            {
-                dtRet = dtNew;
-            }
-        #endif
-
-            iso8601DateTime = dtRet.toString( Qt::ISODate );
-        }
-
-        if ( ! iso8601DateTime.isEmpty() )
-        {
-            double num = cell->value().toDouble();
-            QString strNum = cell->value().toString();
-            // qDebug() << "\t\tiso8601DateTime : " << iso8601DateTime << " , " << num << " , " << strNum;
-
-            writer.writeAttribute(QStringLiteral("t"), QStringLiteral("d"));
-            writer.writeTextElement(QStringLiteral("v"), iso8601DateTime );
-        }
-        */
-
         // dev65
 
         double num = cell->value().toDouble();
@@ -1706,9 +1625,9 @@ void WorksheetPrivate::saveXmlCellData(QXmlStreamWriter &writer, int row, int co
         }
 
         // number type. see for 18.18.11 ST_CellType (Cell Type) more information.
-        writer.writeAttribute(QStringLiteral("t"), QStringLiteral("n"));
-        writer.writeTextElement(QStringLiteral("v"), cell->value().toString() );
+        writer.writeAttribute(QStringLiteral("t"), QStringLiteral("n")); // number (not d)
 
+        writer.writeTextElement(QStringLiteral("v"), cell->value().toString() );
     }
     else if (cell->cellType() == Cell::ErrorType) // 'e'
     {
@@ -2326,7 +2245,9 @@ void WorksheetPrivate::loadXmlSheetData(QXmlStreamReader &reader)
 
     // qDebug() << "loadXmlSheetData()";
 
-	while (!reader.atEnd() && !(reader.name() == QLatin1String("sheetData") && reader.tokenType() == QXmlStreamReader::EndElement)) 
+    while (!reader.atEnd() &&
+           !(reader.name() == QLatin1String("sheetData") &&
+             reader.tokenType() == QXmlStreamReader::EndElement))
 	{
 		if (reader.readNextStartElement()) 
 		{
@@ -2388,7 +2309,7 @@ void WorksheetPrivate::loadXmlSheetData(QXmlStreamReader &reader)
 				qint32 styleIndex = -1;
 				if (attributes.hasAttribute(QLatin1String("s"))) // Style (defined in the styles.xml file)
 				{ 
-					//"s" == style index
+                    // "s" == style index
 					int idx = attributes.value(QLatin1String("s")).toString().toInt();
 					format = workbook->styles()->xfFormat(idx);
 					styleIndex = idx;
@@ -2432,6 +2353,8 @@ void WorksheetPrivate::loadXmlSheetData(QXmlStreamReader &reader)
 					{
                         cellType = Cell::CustomType; // custom type
 					}
+
+                    // qDebug() << "*************** typeString : " << typeString;
 				}
 
                 // [dev54] temp cell for checking datetype
@@ -2440,6 +2363,8 @@ void WorksheetPrivate::loadXmlSheetData(QXmlStreamReader &reader)
                 {
                     cellType = Cell::DateType;
                 }
+
+                // qDebug() << "**************" << cellType << tempCell.value() ;
 
 				// create a heap of new cell
 				QSharedPointer<Cell> cell(new Cell(QVariant(), cellType, format, q, styleIndex));
