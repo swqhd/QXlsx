@@ -5,6 +5,7 @@ TEMPLATE = app
 
 QT += core
 QT += gui
+QT += widgets
 
 CONFIG += console
 CONFIG -= app_bundle
@@ -36,3 +37,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
 main.cpp \
 test.cpp
+
+RESOURCES += \
+test.qrc

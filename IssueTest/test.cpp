@@ -18,35 +18,26 @@ using namespace std;
 #include "xlsxrichstring.h"
 #include "xlsxworkbook.h"
 
-// int test( QVector<QVariant> params );
-
 int test( QVector<QVariant> params )
 {
-    qDebug() << "[debug] current path : " << QDir::currentPath();
-
     using namespace QXlsx;
 
-    Document doc1;
+    QString filepath = ":/test.xlsx";
 
-    /*
-    I simply added "0.####" to numberformat.xlsx:
+    Document xlsxR(filepath);
+    if (!xlsxR.load())
+    {
+        qDebug() << "failed to load file";
+        return (-1);
+    }
 
-    //Custom number formats
-    QStringList numFormats;
-    numFormats
-    << "Qt #"
-    << "yyyy-mmm-dd"
-    << "$ #,##0.00"
-    << "[red]0.00"
-    << "0.####";
-    */
-
-    Format fmt;
-    fmt.setNumberFormat( "0.####" );
-    // doc1.write( 1, 1, int(30), fmt );
-    doc1.write( 1, 2, double(30), fmt );
-
-    doc1.saveAs("test10.xlsx");
+    int row = 1; int col = 1;
+    Cell* cell = xlsxR.cellAt(row, col);
+    if ( cell != NULL )
+    {
+        QVariant var = cell->readValue();
+        qDebug() << var;
+    }
 
     return 0;
 }

@@ -25,9 +25,7 @@ int main(int argc, char *argv[])
 	QCoreApplication app(argc, argv);
 
 	QVector<QVariant> testParams;
-	int ret = test(testParams);
-    // qDebug() << "test return value : " << ret;
-
+    int ret = test(testParams); // see test.cpp
 	return 0; 
 }
 
