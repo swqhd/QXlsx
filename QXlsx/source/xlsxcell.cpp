@@ -246,6 +246,7 @@ CellFormula Cell::formula() const
 /*!
  * Returns whether the value is probably a dateTime or not
  */
+/*
 bool Cell::isDateTime() const
 {
 	Q_D(const Cell);
@@ -271,6 +272,34 @@ bool Cell::isDateTime() const
 
 	return false;
 }
+*/
+
+// dev93 issue102
+bool Cell::isDateTime() const
+{
+    Q_D(const Cell);
+
+    if (d->cellType == DateType)
+        return true;
+
+    double dValue = d->value.toDouble(); // number
+    QString strValue = d->value.toString().toUtf8();
+    bool isValidFormat = d->format.isValid();
+    bool isDateTimeFormat = d->format.isDateTimeFormat(); // datetime format
+
+    if ( // cellType == NumberType ||
+         d->cellType == CustomType )
+    {
+        if ( dValue >= 0 &&
+             isValidFormat &&
+             isDateTimeFormat )
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /*!
  * Return the data time value.
@@ -286,6 +315,8 @@ QDateTime Cell::dateTime() const
 	return datetimeFromNumber(d->value.toDouble(), d->parent->workbook()->isDate1904());
 }
 */
+
+/*
 QVariant Cell::dateTime() const
 {
     Q_D(const Cell);
@@ -303,6 +334,33 @@ QVariant Cell::dateTime() const
     ret = datetimeFromNumber(dValue, isDate1904);
     return ret;
 }
+*/
+
+// dev93 issue102
+QVariant Cell::dateTime() const
+{
+    Q_D(const Cell);
+
+    if (d->cellType == DateType)
+    {
+        return d->value;
+    }
+
+    if (!isDateTime())
+    {
+        return QVariant();
+    }
+
+    // dev57
+
+    QVariant ret;
+    double dValue = d->value.toDouble();
+    bool isDate1904 = d->parent->workbook()->isDate1904();
+    ret = datetimeFromNumber(dValue, isDate1904);
+    return ret;
+}
+
+
 
 /*!
  * Returns whether the cell is probably a rich string or not
