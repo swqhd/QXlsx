@@ -32,7 +32,7 @@ int image()
        {
            QString filename;
            filename = QString("image %1.png").arg( index );
-           img.save( filename );
+           img.save( filename, "PNG" );
 
             qDebug() << " [image index] " << index;
        }
