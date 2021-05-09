@@ -1,12 +1,13 @@
 # CMakeLists.txt for Console Application
 
 # TODO: Set minumum cmake version 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 
 # TODO: Set project name 
 project(WhatType LANGUAGES CXX)
 
 # TODO: Set Your C++ version
+# NOTE: Qt6 uses C++17.
 set(CMAKE_CXX_STANDARD 11) # C++ 11
 
 ##########################
