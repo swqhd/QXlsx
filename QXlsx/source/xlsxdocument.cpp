@@ -872,7 +872,17 @@ bool Document::setRowFormat(int rowFirst, int rowLast, const Format &format)
 */
 bool Document::setRowHidden(int row, bool hidden)
 {
-	return setRowHidden(row,row,hidden);
+    return setRowHidden(row,row,hidden);
+}
+
+/*!
+  Sets the \a outlineLevel property of the row \a row.
+
+  Returns true if success.
+*/
+bool Document::setRowOutlineLevel(int row, int level)
+{
+    return setRowOutlineLevel(row, row, level);
 }
 
 /*!
@@ -885,7 +895,19 @@ bool Document::setRowHidden(int rowFirst, int rowLast, bool hidden)
 {
 	if (Worksheet *sheet = currentWorksheet())
 	   return sheet->setRowHidden(rowFirst, rowLast, hidden);
-	return false;
+    return false;
+}
+
+/*!
+  Sets the \a outlineLevel property of the rows including and between \a rowFirst and \a rowLast.
+
+  Returns true if success.
+*/
+bool Document::setRowOutlineLevel(int rowFirst, int rowLast, int level)
+{
+    if(Worksheet *sheet = currentWorksheet())
+        return sheet->setRowOutlineLevel(rowFirst, rowLast, level);
+    return false;
 }
 
 /*!

@@ -2129,7 +2129,21 @@ bool Worksheet::setRowHidden(int rowFirst,int rowLast, bool hidden)
     for (const QSharedPointer<XlsxRowInfo> &rowInfo : rowInfoList)
 		rowInfo->hidden = hidden;
 
-	return rowInfoList.count() > 0;
+    return rowInfoList.count() > 0;
+}
+
+/*!
+  Sets the \a outlineLevel property of the rows including and between \a rowFirst and \a rowLast.
+
+  Returns true if success.
+*/
+bool Worksheet::setRowOutlineLevel(int rowFirst, int rowLast, int level)
+{
+    Q_D(Worksheet);
+    const QList <QSharedPointer<XlsxRowInfo> > rowInfoList = d->getRowInfoList(rowFirst, rowLast);
+    for (const QSharedPointer<XlsxRowInfo> &rowInfo : rowInfoList)
+        rowInfo->outlineLevel = level;
+    return rowInfoList.count() > 0;
 }
 
 /*!

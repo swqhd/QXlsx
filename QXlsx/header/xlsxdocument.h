@@ -68,9 +68,11 @@ public:
 	bool setRowHeight(int row, double height);
 	bool setRowFormat(int row, const Format &format);
 	bool setRowHidden(int row, bool hidden);
+    bool setRowOutlineLevel(int row, int level);
 	bool setRowHeight(int rowFirst, int rowLast, double height);
 	bool setRowFormat(int rowFirst, int rowLast, const Format &format);
 	bool setRowHidden(int rowFirst, int rowLast, bool hidden);
+    bool setRowOutlineLevel(int rowFirst, int rowLast, int level);
 
 	double rowHeight(int row);
 	Format rowFormat(int row);
