@@ -32,6 +32,10 @@ const int XLSX_ROW_MAX = 1048576;
 const int XLSX_COLUMN_MAX = 16384;
 const int XLSX_STRING_MAX = 32767;
 
+
+
+
+
 class SharedStrings;
 
 struct XlsxHyperlinkData
@@ -88,6 +92,7 @@ struct XlsxSheetFormatProps
     bool thickBottom;
     bool thickTop;
     bool zeroHeight;
+
 };
 
 struct XlsxRowInfo
@@ -248,6 +253,20 @@ public:
     bool showRuler;
     bool showOutlineSymbols;
     bool showWhiteSpace;
+
+
+
+    /**
+     * @brief paneState
+     */
+    Worksheet::PaneState state;
+    Worksheet::PaneActivePane paneActivePane;
+    bool isPaneNeeded;
+    int paneXCol;
+    int paneYCol;
+    QString paneTopLeftCell;
+    QString paneState;
+    QString paneActive;
 
 #if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
     QRegularExpression urlPattern;

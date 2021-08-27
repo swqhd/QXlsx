@@ -49,6 +49,29 @@ private:
     Worksheet *copy(const QString &distName, int distId) const;
 
 public:
+
+    /**
+     * @brief The PaneState enum
+     *
+     * frozen: Panes are frozen, but were not split being frozen. In this state, when the panes are unfrozen again, a single pane results, with no split. In this state, the split bars are not adjustable.
+     * frozen_split: Panes are frozen and were split before being frozen. In this state, when the panes are unfrozen again, the split remains, but is adjustable.
+     * split: Panes are split, but not frozen. In this state, the split bars are adjustable by the user. default nil
+     * TODO move to xlsx
+     */
+    enum PaneState { PS_Frozen, PS_FrozenSplit, PS_Split };
+
+    /**
+     * @brief The PaneActivePane enum
+     *
+     * bottom_left: Bottom left pane, when both vertical and horizontal splits are applied. This value is also used when only a horizontal split has been applied, dividing the pane into upper and lower regions. In that case, this value specifies the bottom pane.
+     * bottom_right: Bottom right pane, when both vertical and horizontal splits are applied.
+     * top_left: Top left pane, when both vertical and horizontal splits are applied. This value is also used when only a horizontal split has been applied, dividing the pane into upper and lower regions. In that case, this value specifies the top pane. This value is also used when only a vertical split has been applied, dividing the pane into right and left regions. In that case, this value specifies the left pane
+     * top_right: Top right pane, when both vertical and horizontal splits are applied. This value is also used when only a vertical split has been applied, dividing the pane into right and left regions. In that case, this value specifies the right pane. default nil
+     * TODO move to xlsx
+     */
+    enum PaneActivePane { PAP_BottomLeft, PAP_BottomRight, PAP_TopLeft, PAP_TopRight };
+
+
     ~Worksheet();
 
 public:
@@ -154,8 +177,19 @@ public:
     bool isWhiteSpaceVisible() const;
     void setWhiteSpaceVisible(bool visible);
  	bool setStartPage(int spagen); //add by liufeijin20181028
-
     QVector<CellLocation> getFullCells(int* maxRow, int* maxCol);
+
+    /**
+       * @brief setPane
+       * @param xPos
+       * @param yPos
+       * @param state
+       * @param activePane
+       *
+       * TODO move to xlsxpane
+       */
+     void setPane(int xPos, int yPos, PaneState state = PaneState::PS_Frozen,PaneActivePane activePane = PaneActivePane::PAP_BottomRight);
+     void setPane(int xPos, int yPos, QString state, QString activePane);
 
 private:
     void saveToXmlFile(QIODevice *device) const;
