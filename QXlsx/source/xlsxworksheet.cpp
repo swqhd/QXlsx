@@ -54,6 +54,7 @@ WorksheetPrivate::WorksheetPrivate(Worksheet *p, Worksheet::CreateFlag flag)
   showRuler(false),
   showOutlineSymbols(true),
   showWhiteSpace(true),
+  isPaneNeeded(false),
   urlPattern(QStringLiteral("^([fh]tt?ps?://)|(mailto:)|(file://)"))
 {
 	previous_row = 0;
@@ -173,7 +174,7 @@ int WorksheetPrivate::checkDimensions(int row, int col, bool ignore_row, bool ig
 Worksheet::Worksheet(const QString &name, int id, Workbook *workbook, CreateFlag flag)
 	:AbstractSheet(name, id, workbook, new WorksheetPrivate(this, flag))
 {
-	if (!workbook) //For unit test propose only. Ignore the memery leak.
+    if (!workbook) //For unit test propose only. Ignore the memory leak.
 		d_func()->workbook = new Workbook(flag);
 }
 
@@ -1351,6 +1352,32 @@ void Worksheet::saveToXmlFile(QIODevice *device) const
 	if (!d->showWhiteSpace)
 		writer.writeAttribute(QStringLiteral("showWhiteSpace"), QStringLiteral("0"));
 	writer.writeAttribute(QStringLiteral("workbookViewId"), QStringLiteral("0"));
+
+    /** ugly implemenation
+     * TODO rewrite
+     *
+     */
+
+    if(d->isPaneNeeded){
+        writer.writeStartElement("pane");
+        writer.writeAttribute(QStringLiteral("xSplit"), QString::number(d->paneXCol));
+        writer.writeAttribute(QStringLiteral("ySplit"), QString::number(d->paneYCol));
+        writer.writeAttribute(QStringLiteral("topLeftCell"),    d->paneTopLeftCell);
+        writer.writeAttribute(QStringLiteral("activePane"),     d->paneActive);
+        writer.writeAttribute(QStringLiteral("state"),          d->paneState);
+        /*
+            <selection pane="topLeft"        activeCell="A1" activeCellId="0" sqref="A1"/>
+            <selection pane="topRight"       activeCell="C1" activeCellId="0" sqref="C1"/>"
+            <selection pane="bottomLeft"     activeCell="A3" activeCellId="0" sqref="A3"/>"
+            <selection pane="bottomRight"    activeCell="D4" activeCellId="0" sqref="D4"/>"
+        */
+        writer.writeEndElement();//pane
+    }
+
+    /**
+     *
+     */
+
 	writer.writeEndElement();//sheetView
 	writer.writeEndElement();//sheetViews
 
@@ -1525,7 +1552,76 @@ bool Worksheet::setStartPage(int spagen)
 
     return true;
 }
+
+
+
 //}}
+
+/**
+ * @brief Worksheet::setPane
+ *
+ * TODO move to xlsxpane
+ */
+void Worksheet::setPane(int xPos, int yPos, PaneState state, PaneActivePane active)
+{
+
+    QString paneState = "frozen";
+    switch (state) {
+    case (PaneState::PS_Frozen): {
+         break;
+        };
+    case (PaneState::PS_FrozenSplit): {
+        paneState = "frozen_split";
+        break;
+        };
+    case (PaneState::PS_Split): {
+        paneState = "split";
+        break;
+    };
+    default: {
+        break;
+    }
+    }
+    QString activePane = "bottom_left";
+    switch (active) {
+    case (PaneActivePane::PAP_BottomLeft): {
+        break;
+    };
+    case (PaneActivePane::PAP_BottomRight): {
+        activePane = "bottom_right";
+        break;
+    };
+    case (PaneActivePane::PAP_TopLeft): {
+        activePane = "top_left";
+        break;
+    };
+    case (PaneActivePane::PAP_TopRight): {
+        activePane = "top_right";
+        break;
+    };
+    default: {
+        break;
+    }
+    }
+    setPane(xPos, yPos, paneState, activePane);
+}
+
+/**
+ * @brief Worksheet::setPane
+ *
+ * TODO move to xlsxpane
+ */
+void Worksheet::setPane(int xPos, int yPos, QString state, QString activePane)
+{
+        Q_D(Worksheet);
+        d->isPaneNeeded = true;
+        d->paneXCol = xPos;
+        d->paneYCol = yPos;
+        d->paneTopLeftCell = QString("%1%2").arg(QChar('A'+xPos)).arg(yPos);
+        d->paneState = state;
+        d->paneActive = activePane;
+}
+
 
 void WorksheetPrivate::saveXmlSheetData(QXmlStreamWriter &writer) const
 {
